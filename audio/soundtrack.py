@@ -358,13 +358,13 @@ music += pad_bus * duck[:, None] + bass_bus * (0.6 + 0.4 * duck[:, None])
 
 # -------------------------------------------------- sfx: LEARN (3–7)
 place(sfx, noise_whoosh(0.45, 600, 3000, 1.0, 1, 'bell'), 3.3, 0.25, pan=0.3)
-place(sfx, pop(400, 1100, 0.12), 3.9, 0.45, pan=-0.2, send=0.3)
-for k, tp in enumerate([4.0, 4.5, 5.0]):
+place(sfx, pop(400, 1100, 0.12), 3.6, 0.45, pan=-0.2, send=0.3)
+for k, tp in enumerate([3.85, 4.25, 4.65, 5.05]):
     place(sfx, pop(600 + 150 * k, 1600 + 200 * k, 0.09), tp, 0.45, pan=0.35, send=0.3)
-    place(sfx, marimba(note(['F#5', 'A5', 'D6'][k]), 0.8), tp, 0.18, pan=0.35, send=0.3)
-place(sfx, noise_whoosh(0.22, 2000, 6000, 1.5, 1, 'bell'), 5.35, 0.2)
-place(sfx, bell(note('A5'), 1.6), 5.57, 0.3, send=0.6)
-place(sfx, bell(note('D6'), 1.6), 5.6, 0.2, send=0.6)
+    place(sfx, marimba(note(['F#5', 'A5', 'B5', 'D6'][k]), 0.8), tp, 0.18, pan=0.35, send=0.3)
+place(sfx, noise_whoosh(0.22, 2000, 6000, 1.5, 1, 'bell'), 5.5, 0.2)
+place(sfx, bell(note('A5'), 1.6), 5.72, 0.3, send=0.6)
+place(sfx, bell(note('D6'), 1.6), 5.75, 0.2, send=0.6)
 # dive into Pointee
 place(sfx, noise_whoosh(0.55, 200, 2500, 1.2, 1.4, 'rise'), 6.5, 0.7, send=0.2)
 place(sfx, sub_boom(0.8, 50), 7.0, 0.5)

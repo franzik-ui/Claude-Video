@@ -12,18 +12,23 @@ window.FILM = FILM;
 const canvas = document.getElementById('c');
 const ctx = canvas.getContext('2d');
 
-// ---------- Palette (sampled from the supplied logo and Pointee artwork) ----------
+// ---------- Palette: PAYBACK CD Guideline (Stand 09/2025), RGB values are master ----------
 const C = {
-  blue: '#013EB0',   // PAYBACK logo blue
-  navy: '#0B1D5A',   // Pointee shoes
-  pink: '#DB5889',   // Pointee cap
-  berry: '#7A1D42',  // wizard cape
-  sky: '#8FC3F5',    // Pointee hands
-  yellow: '#F9C623', // wizard star
-  paper: '#F4F6FB',
-  ink: '#0B1D5A',
-  muted: '#5B6B94',
+  // primary
+  blue: '#003EB0',      // PAYBACK Blue  0|62|176
+  lightBlue: '#CCE6FF', // PAYBACK Light Blue  204|230|255
+  red: '#C80A0A',       // PAYBACK Red  200|10|10
   white: '#FFFFFF',
+  // accents (BFSG-checked for white type)
+  berry: '#AD3966',     // Berry Red
+  ruby: '#EC0640',      // Ruby
+  sunset: '#D83D00',    // Sunset
+  ivy: '#048A04',       // Ivy
+  royal: '#0068E3',     // Royal
+  midnight: '#080F5B',  // Midnight
+  // shades of blue (background use only)
+  shade3: '#ECF6FD',
+  shade4: '#DFF0FC',
 };
 const SANS = '"Jakarta"', MONO = '"JBMono"';
 
@@ -244,7 +249,7 @@ function sphere(x, y, r, shade) {
 }
 
 function S1(t) {
-  bg(C.paper);
+  bg(C.lightBlue);
   const size = 120;
   ctx.font = font(800, size); ctx.letterSpacing = `${-0.03 * size}px`;
   const wText = ctx.measureText(HOOK).width;
@@ -266,7 +271,7 @@ function S1(t) {
     ctx.translate(x0 + px + size * 0.28, base + kf * 240 - (1 - pop) * 14);
     ctx.rotate(kf * (i % 2 ? 0.25 : -0.2));
     ctx.font = font(800, size); ctx.letterSpacing = `${-0.03 * size}px`;
-    ctx.fillStyle = C.ink;
+    ctx.fillStyle = C.blue;
     ctx.fillText(HOOK[i], -size * 0.28, 0);
     ctx.restore();
   }
@@ -298,7 +303,7 @@ function capState(t) {
   const [bx, by, br] = BODY.cap;
   const s0 = SPHERE.r / br;
   const km = eIOC(P(t, 3.05, 3.75));
-  const x = lerp(SPHERE.x, 600, km), y = lerp(SPHERE.y, 505, km);
+  const x = lerp(SPHERE.x, 520, km), y = lerp(SPHERE.y, 505, km);
   const s = lerp(s0, 0.6, km) * (1 + 0.07 * spring(t, 2.8, 17, 6));
   return { x, y, s, bx, by, br };
 }
@@ -317,7 +322,7 @@ function pointeeCap(t) {
   // pop shockwave
   if (t > 2.8 && t < 3.5) {
     const k = eOC(P(t, 2.8, 3.4));
-    ring(st.x, st.y, SPHERE.r * (1 + k * 0.9), 10 * (1 - k) + 1, C.pink, 1 - k);
+    ring(st.x, st.y, SPHERE.r * (1 + k * 0.9), 10 * (1 - k) + 1, C.red, 1 - k);
   }
 }
 
@@ -326,11 +331,11 @@ function pointeeCap(t) {
 // =====================================================================
 function pill(x, y, label, suffix, dotColor, k, onDark = false) {
   if (k <= 0) return;
-  const h = 78;
+  const h = 72;
   ctx.save();
-  ctx.font = font(700, 36); ctx.letterSpacing = '0px';
+  ctx.font = font(700, 32); ctx.letterSpacing = '0px';
   const wl = ctx.measureText(label).width;
-  ctx.font = font(500, 30);
+  ctx.font = font(500, 28);
   const ws = suffix ? ctx.measureText(suffix).width + 18 : 0;
   const w = 28 + 22 + 16 + wl + ws + 30;
   const s = lerp(0.85, 1, eOB(k, 2));
@@ -341,32 +346,32 @@ function pill(x, y, label, suffix, dotColor, k, onDark = false) {
   ctx.shadowColor = 'transparent';
   circle(28 + 11, h / 2, 11, dotColor);
   ctx.textBaseline = 'middle';
-  ctx.font = font(700, 36); ctx.fillStyle = C.ink; ctx.fillText(label, 28 + 22 + 16, h / 2 + 2);
-  if (suffix) { ctx.font = font(500, 30); ctx.fillStyle = C.muted; ctx.fillText(suffix, 28 + 22 + 16 + wl + 18, h / 2 + 2); }
+  ctx.font = font(700, 32); ctx.fillStyle = C.blue; ctx.fillText(label, 28 + 22 + 16, h / 2 + 2);
+  if (suffix) { ctx.font = font(500, 28); ctx.fillStyle = C.blue; ctx.fillText(suffix, 28 + 22 + 16 + wl + 18, h / 2 + 2); }
   ctx.restore();
 }
 
 function questionMark(t) {
-  const t0 = 3.9, flip = 5.35;
+  const t0 = 3.6, flip = 5.5;
   if (t < t0) return;
   const k = eOB(P(t, t0, t0 + 0.45), 2.5);
   const kf = P(t, flip, flip + 0.22);
   const sx = Math.abs(Math.cos(kf * Math.PI));
   const glyph = kf < 0.5 ? '?' : '!';
-  const x = 905, y = 300;
+  const x = 830, y = 300;
   const wob = Math.sin(t * 3.1) * 0.06;
   ctx.save();
   ctx.translate(x, y + Math.sin(t * 2.4) * 6);
   ctx.rotate(lerp(-0.5, 0, k) + wob * (glyph === '?' ? 1 : 0.3));
   ctx.scale(Math.max(0.001, k) * Math.max(0.02, sx) * (1 + 0.15 * spring(t, flip + 0.22, 20, 8)), Math.max(0.001, k));
   ctx.font = font(800, 190); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillStyle = glyph === '?' ? C.pink : C.blue;
+  ctx.fillStyle = glyph === '?' ? C.red : C.blue;
   ctx.fillText(glyph, 0, 0);
   ctx.restore();
   // burst lines when it turns into "!"
   if (t > flip + 0.15 && t < flip + 0.8) {
     const kb = eOC(P(t, flip + 0.15, flip + 0.7));
-    ctx.save(); ctx.strokeStyle = C.yellow; ctx.lineWidth = 7; ctx.lineCap = 'round'; ctx.globalAlpha = 1 - P(t, flip + 0.45, flip + 0.8);
+    ctx.save(); ctx.strokeStyle = C.red; ctx.lineWidth = 7; ctx.lineCap = 'round'; ctx.globalAlpha = 1 - P(t, flip + 0.45, flip + 0.8);
     for (let i = 0; i < 7; i++) {
       const a = -Math.PI / 2 + (i - 3) * 0.42;
       const r1 = 95 + kb * 40, r2 = 95 + kb * 85;
@@ -377,14 +382,15 @@ function questionMark(t) {
 }
 
 function S2(t) {
-  bg(C.paper);
-  kicker('01 / 04', t, 3.3, C.muted);
+  bg(C.lightBlue);
+  kicker('01 / 04', t, 3.3, C.blue);
   pointeeCap(t);
   questionMark(t);
-  keyword('Learn', 1000, 440, 190, C.blue, C.pink, t, 3.35);
-  pill(1004, 520, 'Expert Hour', 'weekly', C.blue, P(t, 4.0, 4.5));
-  pill(1064, 618, 'Lunch & Learn', 'monthly', C.pink, P(t, 4.5, 5.0));
-  pill(1004, 716, 'What’s New @ Copilot', 'quarterly', C.yellow, P(t, 5.0, 5.5));
+  keyword('Learn', 930, 420, 190, C.blue, C.red, t, 3.35);
+  pill(934, 490, 'AI Q&A Session', 'weekly', C.blue, P(t, 3.85, 4.35));
+  pill(974, 578, 'Best Practice Session', 'every 6 weeks', C.red, P(t, 4.25, 4.75));
+  pill(934, 666, 'What\u2019s New', 'quarterly', C.royal, P(t, 4.65, 5.15));
+  pill(934, 754, 'AI Hub: Trainings & Learning Content', 'on demand', C.berry, P(t, 5.05, 5.55));
   // exit: dive into Pointee's blue body
   if (t > 6.5) {
     const st = capState(t);
@@ -407,8 +413,8 @@ function promptCharT(i) { return PROMPT_T0 + i * PROMPT_DT + jit(i + 40) * 0.5; 
 
 function S3(t) {
   bg(C.blue);
-  kicker('02 / 04', t, 7.2, C.sky);
-  keyword('Try', 110, 300, 190, C.white, C.yellow, t, 7.25);
+  kicker('02 / 04', t, 7.2, C.lightBlue);
+  keyword('Try', 110, 300, 190, C.white, C.lightBlue, t, 7.25);
 
   // laptop Pointee slides in
   const kl = eOC(P(t, 7.0, 7.7));
@@ -423,7 +429,7 @@ function S3(t) {
   // idea particles streaming from the screen toward the card
   const src = { x: LAP.x + 790 * LAP.s, y: LAP.y + 150 * LAP.s };
   const rnd = mulberry32(5);
-  const cols = [C.pink, C.sky, C.white, C.yellow];
+  const cols = [C.red, C.lightBlue, C.white, C.ruby];
   for (let i = 0; i < 70; i++) {
     const born = 7.55 + rnd() * 2.6, life = 0.9 + rnd() * 0.6;
     const a = -0.9 + rnd() * 1.1, sp = 240 + rnd() * 360;
@@ -447,11 +453,11 @@ function S3(t) {
     rrect(0, 0, CARD.w, CARD.h, 30); ctx.fillStyle = C.white; ctx.fill();
     ctx.shadowColor = 'transparent';
     // header
-    ctx.font = font(600, 22, MONO); ctx.letterSpacing = '3px'; ctx.fillStyle = C.muted; ctx.textBaseline = 'alphabetic';
+    ctx.font = font(600, 22, MONO); ctx.letterSpacing = '3px'; ctx.fillStyle = C.blue; ctx.textBaseline = 'alphabetic';
     ctx.fillText('MY PROMPT', 50, 70);
-    circle(CARD.w - 60, 62, 9, C.pink); circle(CARD.w - 88, 62, 9, C.sky);
+    circle(CARD.w - 60, 62, 9, C.red); circle(CARD.w - 88, 62, 9, C.lightBlue);
     // typed prompt
-    ctx.font = font(500, 36, MONO); ctx.letterSpacing = '-0.5px'; ctx.fillStyle = C.ink;
+    ctx.font = font(500, 36, MONO); ctx.letterSpacing = '-0.5px'; ctx.fillStyle = C.blue;
     let idx = 0, caretX = 50, caretY = 140;
     PROMPT_LINES.forEach((line, li) => {
       let shown = '';
@@ -465,7 +471,7 @@ function S3(t) {
       ctx.fillStyle = C.blue; ctx.fillRect(caretX, caretY - 30, 4, 38);
     }
     // divider
-    ctx.fillStyle = '#E3E9F5'; ctx.fillRect(50, 238, CARD.w - 100, 2);
+    ctx.fillStyle = C.shade4; ctx.fillRect(50, 238, CARD.w - 100, 2);
     // building blocks snap in
     const blocks = [
       { label: 'Context', tag: 'my notes', t0: 9.0 },
@@ -480,20 +486,20 @@ function S3(t) {
       ctx.globalAlpha *= cl(kb * 3);
       ctx.translate((1 - eOB(kb, 2)) * 90, 0);
       rrect(50, y, CARD.w - 100, 80, 20);
-      ctx.fillStyle = b.hero ? C.blue : '#EEF3FC'; ctx.fill();
+      ctx.fillStyle = b.hero ? C.blue : C.shade3; ctx.fill();
       // icon
       if (b.hero) { circle(94, y + 40, 16, C.white); circle(94, y + 40, 8, C.blue); }
       else { ring(94, y + 40, 13, 4, C.blue); }
       ctx.font = font(700, 32); ctx.letterSpacing = '0px'; ctx.textBaseline = 'middle';
-      ctx.fillStyle = b.hero ? C.white : C.ink; ctx.fillText(b.label, 130, y + 42);
+      ctx.fillStyle = b.hero ? C.white : C.blue; ctx.fillText(b.label, 130, y + 42);
       ctx.font = font(500, 22, MONO); ctx.textAlign = 'right';
-      ctx.fillStyle = b.hero ? C.sky : C.muted; ctx.fillText(b.tag, CARD.w - 120, y + 42);
+      ctx.fillStyle = b.hero ? C.lightBlue : C.blue; ctx.fillText(b.tag, CARD.w - 120, y + 42);
       // check
       const kk = eOB(P(t, b.t0 + 0.2, b.t0 + 0.5), 2.5);
       if (kk > 0) {
         const cx = CARD.w - 84, cy = y + 40;
-        circle(cx, cy, 17 * kk, b.hero ? C.yellow : C.blue);
-        ctx.strokeStyle = b.hero ? C.navy : C.white; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        circle(cx, cy, 17 * kk, b.hero ? C.ivy : C.blue);
+        ctx.strokeStyle = C.white; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
         ctx.beginPath(); ctx.moveTo(cx - 7 * kk, cy); ctx.lineTo(cx - 2 * kk, cy + 6 * kk); ctx.lineTo(cx + 8 * kk, cy - 6 * kk); ctx.stroke();
       }
       ctx.restore();
@@ -502,7 +508,7 @@ function S3(t) {
   }
   // caption: enablement, not a service desk
   copyLine('You build it. We help.', CARD.x + 4, 850, font(700, 46), C.white, t, 9.8);
-  copyLine('WORKING SESSION · WEEKLY', CARD.x + 6, 900, font(500, 22, MONO), C.sky, t, 10.0, { ls: 3 });
+  copyLine('WORKING SESSION · WEEKLY', CARD.x + 6, 900, font(500, 22, MONO), C.lightBlue, t, 10.0, { ls: 3 });
 }
 
 // =====================================================================
@@ -592,7 +598,7 @@ function nodeState(n, t) {
 }
 
 function S4(t) {
-  bg(C.paper);
+  bg(C.lightBlue);
   // camera pulls back from the origin dot
   const cam = 1 + 0.75 * (1 - eOC(P(t, 10.55, 12.1)));
   const conv = t > 14.3;
@@ -603,7 +609,7 @@ function S4(t) {
   if (!conv || t < 14.6) CLUSTERS.forEach((c, i) => {
     const k = eOC(P(t, 11.9 + i * 0.09, 12.4 + i * 0.09)) * (1 - P(t, 14.25, 14.5));
     if (k <= 0) return;
-    textAt(c.name, c.x, c.y + (1 - k) * 12, font(600, 20, MONO), C.muted, 'center', 3, k);
+    textAt(c.name, c.x, c.y + (1 - k) * 12, font(600, 20, MONO), C.blue, 'center', 3, k);
   });
 
   // connection threads (spark travels from source to ambassador)
@@ -620,7 +626,7 @@ function S4(t) {
     const e = eIOC(ks);
     ctx.save();
     ctx.globalAlpha = (n.amb ? 0.55 : 0.35) * fade;
-    ctx.strokeStyle = n.amb ? C.blue : C.sky; ctx.lineWidth = n.amb ? 2.5 : 2;
+    ctx.strokeStyle = n.amb ? C.blue : C.royal; ctx.lineWidth = n.amb ? 2.5 : 2;
     ctx.beginPath();
     const steps = 18; ctx.moveTo(s.x, s.y);
     for (let i = 1; i <= steps; i++) {
@@ -634,7 +640,7 @@ function S4(t) {
       const u = e;
       const x = (1 - u) ** 2 * s.x + 2 * (1 - u) * u * mx + u * u * n.x;
       const y = (1 - u) ** 2 * s.y + 2 * (1 - u) * u * my + u * u * n.y;
-      ctx.globalAlpha = 1; circle(x, y, 6, C.pink);
+      ctx.globalAlpha = 1; circle(x, y, 6, C.red);
     }
     ctx.restore();
   }
@@ -654,25 +660,26 @@ function S4(t) {
       circle(x, y, 11 * (1 + 0.25 * spring(t, 11.3, 14, 5)), C.blue);
       continue;
     }
-    if (!on) { ring(x, y, 8 * ka, 2.2, C.muted, 0.45); continue; }
+    if (!on) { ring(x, y, 8 * ka, 2.2, C.blue, 0.3); continue; }
     const r = (n.amb ? 11 : 8.5) * (1 + 0.35 * spring(t, n.tA, 16, 7));
-    circle(x, y, r, n.amb ? C.blue : C.sky);
-    if (n.amb && k < 1) ring(x, y, 11 + 30 * eOC(k), 3 * (1 - k) + 0.5, C.pink, 1 - k);
+    if (n.amb) circle(x, y, r + 3, C.white);
+    circle(x, y, r, n.amb ? C.blue : C.royal);
+    if (n.amb && k < 1) ring(x, y, 11 + 30 * eOC(k), 3 * (1 - k) + 0.5, C.red, 1 - k);
   }
   ctx.restore();
 
   // headline
   const out = 14.15;
-  kicker('03 / 04', t, 11.3, C.muted, out);
-  keyword('Share', 110, 300, 190, C.blue, C.pink, t, 11.3, { out });
+  kicker('03 / 04', t, 11.3, C.blue, out);
+  keyword('Share', 110, 300, 190, C.blue, C.red, t, 11.3, { out });
   // counting headline
   const kn = P(t, 11.9, 13.1);
   if (kn > 0) {
     const num = Math.round(80 * eOC(kn));
     const label = `${num}${kn >= 1 ? '+' : ''} AI Ambassadors`;
-    copyLine(label, 114, 392, font(800, 56), C.ink, t, 11.85, { out });
+    copyLine(label, 114, 392, font(800, 56), C.blue, t, 11.85, { out });
   }
-  copyLine('across 1,400+ colleagues', 116, 448, font(500, 36), C.muted, t, 12.5, { out });
+  copyLine('across 1,400+ colleagues', 116, 448, font(500, 36), C.blue, t, 12.5, { out });
 }
 
 // =====================================================================
@@ -708,9 +715,9 @@ function cardIcon(kind, x, y, t) {
     ctx.beginPath(); ctx.moveTo(x + 2, y + 13); ctx.lineTo(x + 18, y + 13); ctx.stroke();
   } else if (kind === 'proto') {
     ctx.fillRect(x - 18, y + 2, 16, 16); ctx.fillRect(x + 2, y + 2, 16, 16);
-    ctx.fillStyle = C.pink; ctx.fillRect(x - 8, y - 18, 16, 16);
+    ctx.fillStyle = C.red; ctx.fillRect(x - 8, y - 18, 16, 16);
   } else if (kind === 'star') {
-    starPath(x, y, 20, 9); ctx.fillStyle = C.yellow; ctx.fill();
+    starPath(x, y, 20, 9); ctx.fillStyle = C.ruby; ctx.fill();
   }
   ctx.restore();
 }
@@ -734,7 +741,7 @@ function wizardPos(t) {
 }
 
 function S5(t) {
-  bg(C.pink);
+  bg(C.berry);
   const out = 20.45;
   // flash on the drop
   // teams of colleagues orbit — the energy of the day
@@ -742,7 +749,7 @@ function S5(t) {
   for (const n of NODES) {
     const p = teamPos(n, t);
     const y = p.y + fall * (300 + (n.slot % 7) * 40);
-    circle(p.x, y, n.amb ? 10 : 8, n.amb ? C.blue : (n.slot % 4 === 0 ? C.white : C.sky));
+    circle(p.x, y, n.amb ? 10 : 8, n.amb ? C.blue : (n.slot % 4 === 0 ? C.white : C.lightBlue));
   }
 
   kicker('04 / 04', t, 15.05, 'rgba(255,255,255,0.8)', out);
@@ -752,7 +759,7 @@ function S5(t) {
     const s = lerp(1.35, 1, eOE(ks));
     ctx.save();
     ctx.translate(110, 300); ctx.scale(s, s); ctx.translate(-110, -300);
-    keyword('Build', 110, 300, 190, C.white, C.yellow, t, 14.98, { stagger: 0.02, dur: 0.3, out });
+    keyword('Build', 110, 300, 190, C.white, C.lightBlue, t, 14.98, { stagger: 0.02, dur: 0.3, out });
     ctx.restore();
   }
   // PROMPTATHON tag
@@ -764,7 +771,7 @@ function S5(t) {
     const w = ctx.measureText('PROMPTATHON').width + 50;
     const sx = eOB(kp, 2);
     ctx.translate(114, 348); ctx.scale(sx, 1);
-    rrect(0, 0, w, 60, 30); ctx.fillStyle = C.navy; ctx.fill();
+    rrect(0, 0, w, 60, 30); ctx.fillStyle = C.midnight; ctx.fill();
     ctx.fillStyle = C.white; ctx.textBaseline = 'middle'; ctx.fillText('PROMPTATHON', 25, 32);
     ctx.restore();
   }
@@ -779,7 +786,7 @@ function S5(t) {
     const a = eOC(kt) * (1 - P(t, out, out + 0.3));
     textAt(`${hh}:${mm}`, 1800, 200, font(600, 84, MONO), C.white, 'right', -2, a);
     ctx.save(); ctx.globalAlpha = a * 0.35; ctx.fillStyle = C.white; ctx.fillRect(1800 - 300, 232, 300, 6); ctx.restore();
-    ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = C.yellow; ctx.fillRect(1800 - 300, 232, 300 * kk, 6); ctx.restore();
+    ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = C.lightBlue; ctx.fillRect(1800 - 300, 232, 300 * kk, 6); ctx.restore();
     textAt(kk >= 1 ? 'PITCH TO THE JURY' : 'BUILD TIME', 1800, 280, font(500, 20, MONO), C.white, 'right', 3, a * 0.85);
   }
 
@@ -801,17 +808,17 @@ function S5(t) {
     const ca = 1 - P(t, 20.4, 20.6);
     if (ca > 0) {
       ctx.globalAlpha *= ca;
-      ctx.font = font(600, 22, MONO); ctx.letterSpacing = '2px'; ctx.fillStyle = C.pink; ctx.textBaseline = 'alphabetic';
+      ctx.font = font(600, 22, MONO); ctx.letterSpacing = '2px'; ctx.fillStyle = C.berry; ctx.textBaseline = 'alphabetic';
       ctx.fillText(c.n, -PC.w / 2 + 26, -PC.h / 2 + 46);
       cardIcon(c.icon, PC.w / 2 - 50, -PC.h / 2 + 46, t);
-      ctx.font = font(800, 42); ctx.letterSpacing = '-1px'; ctx.fillStyle = C.ink;
+      ctx.font = font(800, 42); ctx.letterSpacing = '-1px'; ctx.fillStyle = C.blue;
       ctx.fillText(c.label, -PC.w / 2 + 26, PC.h / 2 - 32);
       // check on the beat as the teams progress
       const kk = eOB(P(t, 18.0 + i * 0.25, 18.3 + i * 0.25), 2.5);
       if (kk > 0) {
         const bx = PC.w / 2 - 10, by = -PC.h / 2 + 10; // corner badge
-        circle(bx, by, 24 * kk, C.white); circle(bx, by, 19 * kk, i === 3 ? C.yellow : C.blue);
-        ctx.strokeStyle = i === 3 ? C.navy : C.white; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        circle(bx, by, 24 * kk, C.white); circle(bx, by, 19 * kk, i === 3 ? C.ivy : C.blue);
+        ctx.strokeStyle = C.white; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
         ctx.beginPath(); ctx.moveTo(bx - 7 * kk, by); ctx.lineTo(bx - 2 * kk, by + 6 * kk); ctx.lineTo(bx + 8 * kk, by - 6 * kk); ctx.stroke();
       }
     }
@@ -829,16 +836,14 @@ function S5(t) {
       const a = (1 - j / 18);
       ctx.save(); ctx.globalAlpha = a * 0.9;
       starPath(sx + Math.sin(j * 7.1) * 16, sy + Math.cos(j * 5.3) * 16, 12 * a + 3, 5 * a + 1.5, 4, j * 0.4);
-      ctx.fillStyle = j % 3 ? C.yellow : C.white; ctx.fill(); ctx.restore();
+      ctx.fillStyle = j % 3 ? C.lightBlue : C.white; ctx.fill(); ctx.restore();
     }
     const w = wizardPos(t);
     const tilt = -0.12 + Math.sin(w.u * Math.PI) * 0.08;
     drawImg(IMG.wizard, BODY.wizard[0], BODY.wizard[1], w.x, w.y, 0.6, tilt, 1);
   }
 
-  // drop flash
-  const fl = 1 - P(t, 15.0, 15.18);
-  if (fl > 0 && t >= 15.0) { ctx.save(); ctx.globalAlpha = fl * 0.55; bg(C.white); ctx.restore(); }
+
 
   // exit: blue floods from the centre, cards become circles on top
   if (t > 20.55) {
@@ -856,7 +861,7 @@ function S5(t) {
 let CONF = [];
 function buildConfetti() {
   const rnd = mulberry32(21);
-  const cols = [C.yellow, C.white, C.blue, C.navy, C.sky, C.yellow];
+  const cols = [C.white, C.lightBlue, C.royal, C.midnight, C.sunset, C.white];
   for (let i = 0; i < 170; i++) {
     const a = -Math.PI / 2 + (rnd() - 0.5) * 2.4;
     const sp = 700 + rnd() * 1100;
@@ -905,7 +910,7 @@ function S6(t) {
   const km = eIOQ(P(t, 24.2, 24.85));   // frame closes around the mark
   const kw = P(t, 24.88, 25.0);          // hand-over to the real logo artwork
   // background: blue frame shrinks into the logo's rounded rectangle
-  bg(C.paper);
+  bg(C.lightBlue);
   const [rx0, ry0, rx1, ry1] = LOGO.rect;
   const X0 = lerp(-20, lx(rx0), km), Y0 = lerp(-20, ly(ry0), km);
   const X1 = lerp(W + 20, lx(rx1), km), Y1 = lerp(H + 20, ly(ry1), km);
@@ -933,7 +938,7 @@ function S6(t) {
     });
     // words
     WORDS.forEach((w, i) => {
-      keyword(w, ROW[i].x, 640, 62, C.white, C.yellow, t, WORD_T[i] - 0.12, { align: 'center', stagger: 0.025, dur: 0.45, out: 23.55 });
+      keyword(w, ROW[i].x, 640, 62, C.white, C.lightBlue, t, WORD_T[i] - 0.12, { align: 'center', stagger: 0.025, dur: 0.45, out: 23.55 });
     });
     // wordmark wipes in from the artwork
     const kr = eIOC(P(t, 24.5, 24.95));
@@ -955,7 +960,7 @@ function S6(t) {
   }
 
   // AI Enablement
-  keyword('AI Enablement', 960, 760, 96, C.blue, C.pink, t, 25.2, { align: 'center', stagger: 0.028, dur: 0.55, ls: -0.03 });
+  keyword('AI Enablement', 960, 760, 96, C.blue, C.red, t, 25.2, { align: 'center', stagger: 0.028, dur: 0.55, ls: -0.03 });
   // typed bookend line — the full stop returns as the dot
   if (t >= FINAL_T0 - 0.35) {
     const size = 40;
@@ -967,7 +972,7 @@ function S6(t) {
     const x0 = 960 - total / 2, base = 850;
     let shown = '';
     for (let i = 0; i < FINAL_LINE.length; i++) if (t >= finalCharT(i)) shown += FINAL_LINE[i];
-    ctx.fillStyle = C.ink; ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = C.blue; ctx.textBaseline = 'alphabetic';
     ctx.fillText(shown, x0, base);
     const endT = finalCharT(FINAL_LINE.length - 1);
     if (t < FINAL_DOT) {
@@ -1006,7 +1011,7 @@ function renderFrame(t) {
   finish(t);
   // closing fade
   const f = P(t, 28.45, 29.0);
-  if (f > 0) { ctx.save(); ctx.globalAlpha = f; bg(C.paper); ctx.restore(); }
+  if (f > 0) { ctx.save(); ctx.globalAlpha = f; bg(C.lightBlue); ctx.restore(); }
 }
 window.renderFrame = renderFrame;
 })();

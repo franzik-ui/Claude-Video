@@ -13,7 +13,7 @@ peaks at the Promptathon and closes as the four circles of the PAYBACK logo. The
 | Time | Scene | Content |
 |---|---|---|
 | 0–3 s | Hook | Typed line, full stop inflates into the Pointee |
-| 3–7 s | 01 Learn | Pointee with AI cap, "?" flips to "!", Expert Hour / Lunch & Learn / What's New @ Copilot |
+| 3–7 s | 01 Learn | Pointee with AI cap, "?" flips to "!", AI Q&A Session / Best Practice Session / What’s New / AI Hub |
 | 7–11 s | 02 Try | Laptop Pointee, prompt → Context → Instructions → My agent. "You build it. We help." |
 | 11–15 s | 03 Share | Ambassador network lights up across departments. 80+ AI Ambassadors, 1,400+ colleagues |
 | 15–21 s | 04 Build | Promptathon: teams, 09:00 → 16:00, Idea → Prompt → Prototype → Pitch, wizard Pointee, confetti |
@@ -42,6 +42,12 @@ ffmpeg -y -i render/film_silent.mp4 -i audio/soundtrack.wav -map 0:v -map 1:a -c
   -c:a aac -b:a 320k -shortest -movflags +faststart output/PAYBACK_AI_Enablement_TheDot_1080p.mp4
 ```
 All timings live in `src/film.js`; the matching audio cues are in `audio/soundtrack.py`.
+
+## Brand
+Colours follow the PAYBACK CD Guideline (Stand 09/2025, RGB master values): PAYBACK Blue #003EB0,
+PAYBACK Light Blue #CCE6FF (dominant background), PAYBACK Red #C80A0A, White, plus the accents Berry Red
+(Promptathon stage), Royal, Ruby, Ivy, Sunset and Midnight. No light flashes (CD video note).
+The PAYBACK house font is not included in the guideline PDF; Plus Jakarta Sans is used as a stand-in.
 
 ## Rights
 Music and sound effects are synthesised from scratch in code (no samples, no third-party music).
